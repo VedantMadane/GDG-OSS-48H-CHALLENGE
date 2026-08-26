@@ -80,5 +80,18 @@ describe('GDG EventHub Frontend', () => {
       expect(screen.queryByText('React Workshop')).not.toBeInTheDocument();
       expect(screen.getByText('Python ML')).toBeInTheDocument();
     });
+
+    it('renders ErrorState when the events API fails', async () => {
+      api.getEvents.mockRejectedValue(new Error('Network Error'));
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Oops! Something went wrong.')).toBeInTheDocument();
+        expect(screen.getByText('Network Error')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Try Again/i })).toBeInTheDocument();
+      });
+
+      expect(screen.queryByText('React Workshop')).not.toBeInTheDocument();
+    });
   });
 });
